@@ -1,4 +1,4 @@
-module github.com/PonkratovDs/rmq
+module github.com/PonkratovDs/rmq/v4
 
 go 1.17
 
