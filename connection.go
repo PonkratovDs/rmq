@@ -66,9 +66,20 @@ func OpenConnection(tag string, network string, address string, db int, errChan 
 	return OpenConnectionWithRedisClient(tag, redisClient, errChan)
 }
 
+// OpenClusterConnection opens and returns a new cluster connection
+func OpenClusterConnection(tag string, addresses []string, errChan chan<- error) (Connection, error) {
+	redisUClient := redis.NewClusterClient(&redis.ClusterOptions{Addrs: addresses})
+	return OpenConnectionWithUniversalRedisClient(tag, redisUClient, errChan)
+}
+
 // OpenConnectionWithRedisClient opens and returns a new connection
 func OpenConnectionWithRedisClient(tag string, redisClient redis.Cmdable, errChan chan<- error) (Connection, error) {
-	return OpenConnectionWithRmqRedisClient(tag, RedisWrapper{redisClient}, errChan)
+	return OpenConnectionWithRmqRedisClient(tag, RedisWrapperImpl{redisClient}, errChan)
+}
+
+// OpenConnectionWithUniversalRedisClient opens and returns a new connection for cluster
+func OpenConnectionWithUniversalRedisClient(tag string, redisUClient redis.UniversalClient, errChan chan<- error) (Connection, error) {
+	return OpenConnectionWithRmqRedisClient(tag, RedisWrapperImpl{redisUClient}, errChan)
 }
 
 // OpenConnectionWithTestRedisClient opens and returns a new connection which
